@@ -1,6 +1,6 @@
 [project]
 name = "funmill"
-version = "0.1.0"
+version = "0.1.8"
 description = "Python client SDK for the Funmill task API"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -26,8 +26,8 @@ name = "farfarfun"
 email = "farfarfun@qq.com"
 [project.urls]
 Organization = "https://github.com/farfarfun"
-Repository = "https://github.com/farfarfun/funmill-sdk"
-Releases = "https://github.com/farfarfun/funmill-sdk/releases"
+Repository = "https://github.com/farfarfun/funmill"
+Releases = "https://github.com/farfarfun/funmill/releases"
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
 

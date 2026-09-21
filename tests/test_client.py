@@ -64,9 +64,7 @@ def test_client_covers_every_http_route():
         if request.url.path == f"/v1/tasks/{JOB_ID}/logs":
             return httpx.Response(200, json={"task_id": JOB_ID, "logs": "done"})
         if request.url.path == f"/v1/tasks/{JOB_ID}/result":
-            return httpx.Response(
-                200, json={"task_id": JOB_ID, "result": {"ok": True}}
-            )
+            return httpx.Response(200, json={"task_id": JOB_ID, "result": {"ok": True}})
         if request.url.path == f"/v1/tasks/{JOB_ID}/cancel":
             return httpx.Response(200, json={})
         if request.url.path == f"/v1/tasks/{JOB_ID}/rerun":
