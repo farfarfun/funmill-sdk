@@ -1,0 +1,50 @@
+[project]
+name = "funmill"
+version = "0.1.0"
+description = "Python client SDK for the Funmill task API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "httpx>=0.27,<1",
+  "pydantic>=2,<3",
+]
+license = "MIT"
+
+[[project.authors]]
+name = "牛哥"
+email = "niuliangtao@qq.com"
+
+[[project.authors]]
+name = "farfarfun"
+email = "farfarfun@qq.com"
+[[project.maintainers]]
+name = "牛哥"
+email = "niuliangtao@qq.com"
+
+[[project.maintainers]]
+name = "farfarfun"
+email = "farfarfun@qq.com"
+[project.urls]
+Organization = "https://github.com/farfarfun"
+Repository = "https://github.com/farfarfun/funmill-sdk"
+Releases = "https://github.com/farfarfun/funmill-sdk/releases"
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/funmill"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
