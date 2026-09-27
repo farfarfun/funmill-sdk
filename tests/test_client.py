@@ -51,11 +51,23 @@ def test_client_covers_every_http_route():
             return httpx.Response(200, json={"status": "ok", "backend": "dagu"})
         if request.url.path == "/v1/tasks" and request.method == "POST":
             return httpx.Response(
-                200, json={"task_id": JOB_ID, "status": "queued", "rerun_of": None}
+                200,
+                json={
+                    "task_id": JOB_ID,
+                    "status": "queued",
+                    "rerun_of": None,
+                    "logs_url": f"http://testserver/v1/tasks/{JOB_ID}/logs",
+                },
             )
         if request.url.path == "/v1/workflows":
             return httpx.Response(
-                200, json={"task_id": JOB_ID, "status": "queued", "rerun_of": None}
+                200,
+                json={
+                    "task_id": JOB_ID,
+                    "status": "queued",
+                    "rerun_of": None,
+                    "logs_url": f"http://testserver/v1/tasks/{JOB_ID}/logs",
+                },
             )
         if request.url.path == f"/v1/tasks/{JOB_ID}" and request.method == "GET":
             return httpx.Response(200, json={"task_id": JOB_ID, "status": "succeeded"})
@@ -70,7 +82,12 @@ def test_client_covers_every_http_route():
         if request.url.path == f"/v1/tasks/{JOB_ID}/rerun":
             return httpx.Response(
                 200,
-                json={"task_id": RERUN_ID, "status": "queued", "rerun_of": JOB_ID},
+                json={
+                    "task_id": RERUN_ID,
+                    "status": "queued",
+                    "rerun_of": JOB_ID,
+                    "logs_url": f"http://testserver/v1/tasks/{RERUN_ID}/logs",
+                },
             )
         raise AssertionError(f"unexpected request: {request.method} {request.url.path}")
 
@@ -81,6 +98,7 @@ def test_client_covers_every_http_route():
         accepted = sdk.submit_task(submitted)
         assert accepted.task_id == JOB_ID
         assert accepted.status == TaskStatus.QUEUED
+        assert accepted.logs_url == f"http://testserver/v1/tasks/{JOB_ID}/logs"
 
         accepted = sdk.submit_workflow(workflow())
         assert accepted.task_id == JOB_ID
