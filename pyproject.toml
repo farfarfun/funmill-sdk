@@ -1,6 +1,6 @@
 [project]
 name = "funmill"
-version = "1.0.18"
+version = "1.0.19"
 description = "Python client SDK for the Funmill task API"
 readme = "README.md"
 requires-python = ">=3.12"
