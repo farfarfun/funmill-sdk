@@ -1,11 +1,11 @@
 [project]
 name = "funmill"
-version = "1.0.29"
+version = "1.0.30"
 description = "Python client SDK for the Funmill task API"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "funmill-api>=1.0.28",
+  "funmill-api>=1.0.29",
   "httpx>=0.27,<1",
   "pydantic>=2,<3",
 ]

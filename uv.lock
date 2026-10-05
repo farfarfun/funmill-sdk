@@ -82,7 +82,7 @@ wheels = [
 
 [[package]]
 name = "funmill"
-version = "1.0.29"
+version = "1.0.30"
 source = { editable = "." }
 dependencies = [
     { name = "funmill-api" },
@@ -98,7 +98,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "funmill-api", specifier = ">=1.0.28" },
+    { name = "funmill-api", specifier = ">=1.0.29" },
     { name = "httpx", specifier = ">=0.27,<1" },
     { name = "pydantic", specifier = ">=2,<3" },
 ]
@@ -111,7 +111,7 @@ dev = [
 
 [[package]]
 name = "funmill-api"
-version = "1.0.28"
+version = "1.0.29"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
@@ -119,7 +119,7 @@ dependencies = [
     { name = "uvicorn" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/ff/4d82bdda2ee6d3614731463da123a4312a14ac67e45b55637eebf5c01c2f/funmill_api-1.0.28-py3-none-any.whl", hash = "sha256:172ac73156cd4c64aec437c929e8d82a95dd374c518c510d7162721e8ec69329", size = 36913, upload-time = "2026-10-05T09:39:35.894Z" },
+    { url = "https://files.pythonhosted.org/packages/44/5f/5731b52ad1bbed451642f82ed4bd0993faf2416d5551b0ad12b48b5bfce5/funmill_api-1.0.29-py3-none-any.whl", hash = "sha256:09c5c43aefd2e0a4c3539e541d6fea8279f68f4237595bdc90f47d2068f8a6e4", size = 36914, upload-time = "2026-10-05T09:52:57.306Z" },
 ]
 
 [[package]]
