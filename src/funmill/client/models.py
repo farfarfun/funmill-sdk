@@ -1,10 +1,15 @@
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Any, Self
+from typing import Annotated, Any, Literal, Self
 
 from pydantic import AnyHttpUrl, BaseModel, Field, model_validator
 
 DependencyId = Annotated[str, Field(min_length=1, max_length=200)]
+ResourceName = Annotated[str, Field(pattern=r"^[a-z][a-z0-9_-]{0,63}$")]
+ResourceQuantity = Annotated[int, Field(strict=True, ge=1)]
+WaitingReason = Literal[
+    "dependency", "resource_unavailable", "external_resource_in_use"
+]
 
 
 class TaskLanguage(StrEnum):
@@ -29,6 +34,9 @@ class TaskDefinition(BaseModel):
     language: TaskLanguage
     source: str = Field(min_length=1, max_length=1_000_000)
     args: dict[str, Any] = Field(default_factory=dict)
+    resources: dict[ResourceName, ResourceQuantity] = Field(
+        default_factory=dict, max_length=16
+    )
     retry: RetryPolicy = Field(default_factory=RetryPolicy)
     timeout_seconds: int | None = Field(default=None, ge=1, le=86_400)
     name: str | None = Field(default=None, max_length=200)
@@ -37,7 +45,7 @@ class TaskDefinition(BaseModel):
 
 class TaskSubmit(TaskDefinition):
     depends_on: list[DependencyId] = Field(default_factory=list, max_length=100)
-    dependency_timeout_seconds: int = Field(default=86_400, ge=1, le=604_800)
+    dependency_timeout_seconds: int | None = Field(default=None, ge=1, le=604_800)
     callback_url: AnyHttpUrl | None = None
 
 
@@ -49,7 +57,7 @@ class WorkflowTask(TaskDefinition):
 class WorkflowSubmit(BaseModel):
     tasks: list[WorkflowTask] = Field(min_length=1, max_length=100)
     depends_on: list[DependencyId] = Field(default_factory=list, max_length=100)
-    dependency_timeout_seconds: int = Field(default=86_400, ge=1, le=604_800)
+    dependency_timeout_seconds: int | None = Field(default=None, ge=1, le=604_800)
     callback_url: AnyHttpUrl | None = None
 
     @model_validator(mode="after")
@@ -106,6 +114,10 @@ class TaskInfo(BaseModel):
     name: str | None = None
     description: str | None = None
     ui_url: str | None = None
+    waiting_reason: WaitingReason | None = None
+    waiting_resource: str | None = None
+    worker_id: str | None = None
+    resource_allocations: dict[str, list[str]] | None = None
 
 
 class TaskProgress(BaseModel):

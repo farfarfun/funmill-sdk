@@ -1,5 +1,8 @@
+import json
+
 import httpx
 import pytest
+from pydantic import ValidationError
 
 from funmill.client import (
     FunmillAPIError,
@@ -115,6 +118,66 @@ def test_client_covers_every_http_route():
         rerun = sdk.rerun(JOB_ID)
         assert rerun.task_id == RERUN_ID
         assert rerun.rerun_of == JOB_ID
+
+
+def test_resource_contract_round_trips_and_rejects_invalid_quantities():
+    requests = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(json.loads(request.content))
+        if request.url.path == "/v1/workflows":
+            return httpx.Response(
+                400, json={"detail": "resource steps are unsupported"}
+            )
+        return httpx.Response(
+            202,
+            json={
+                "task_id": JOB_ID,
+                "status": "queued",
+                "logs_url": "http://testserver/logs",
+            },
+        )
+
+    with make_client(handler) as sdk:
+        sdk.submit_task(
+            TaskSubmit(
+                language="python", source="def main(): pass", resources={"gpu": 1}
+            )
+        )
+        with pytest.raises(FunmillAPIError) as excinfo:
+            sdk.submit_workflow(
+                WorkflowSubmit(
+                    tasks=[
+                        {
+                            "key": "a",
+                            "language": "python",
+                            "source": "def main(): pass",
+                            "resources": {"gpu": 1},
+                        }
+                    ]
+                )
+            )
+        assert excinfo.value.status_code == 400
+    assert requests[0]["resources"] == {"gpu": 1}
+    assert requests[1]["tasks"][0]["resources"] == {"gpu": 1}
+
+    with pytest.raises(ValidationError):
+        TaskSubmit(language="python", source="def main(): pass", resources={"gpu": 0})
+    with pytest.raises(ValidationError):
+        TaskSubmit(language="python", source="def main(): pass", resources={"gpu": "1"})
+
+    info = TaskInfo.model_validate(
+        {
+            "task_id": JOB_ID,
+            "status": "queued",
+            "waiting_reason": "resource_unavailable",
+            "waiting_resource": "gpu",
+            "worker_id": None,
+            "resource_allocations": None,
+        }
+    )
+    assert info.waiting_reason == "resource_unavailable"
+    assert info.waiting_resource == "gpu"
 
 
 def test_client_surfaces_auth_error():

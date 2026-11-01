@@ -4,6 +4,15 @@ Python client SDK for the [Funmill](https://github.com/farfarfun/funmill-api) ta
 API. Distributed on PyPI as `funmill` and imported as `funmill.client`, sharing the
 `funmill` namespace with the `funmill-api` package (`funmill.api`).
 
+`TaskSubmit` accepts `resources={"gpu": 1}` for a Dagu named resource pool.
+The Dagu server must configure the `gpu` queue capacity, and every GPU task
+must submit through that same Dagu instance. Resource requests in workflows,
+multiple resource units, and resource tasks with `depends_on` are currently
+rejected with HTTP 400. Windmill does not support resource pools. Task queries
+expose a pool waiting reason and worker ID; physical resource allocations are
+not yet available. Dependency waits default to no time limit unless
+`dependency_timeout_seconds` is set explicitly.
+
 ## Install
 
 ```bash
